@@ -7,7 +7,7 @@
   "mcversion": "${mcversion}",
   "url": "https://github.com/mirrorcult/NormalASM",
   "updateUrl": "",
-  "authorList": ["Rongmario", "mirrorcult"],
+  "authorList": ["Rongmario"],
   "logoFile": "assets/normalasm/normalasm.png",
   "screenshots": [],
   "dependencies": []
