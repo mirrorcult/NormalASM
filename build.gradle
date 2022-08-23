@@ -13,8 +13,8 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
 
 version = "5.6"
-group = "zone.rong.loliasm"
-archivesBaseName = "loliasm"
+group = "mirror.normalasm"
+archivesBaseName = "normalasm"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
@@ -26,7 +26,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_39"
     def args = [
-            '-Dfml.coreMods.load=zone.rong.loliasm.core.LoliLoadingPlugin',
+            '-Dfml.coreMods.load=mirror.normalasm.core.NormalLoadingPlugin',
             '-Dmixin.hotSwap=true',
             '-Dmixin.checks.interfaces=true',
 			'-Dmixin.debug.export=true'
@@ -135,7 +135,7 @@ processResources {
 
 sourceSets {
     main {
-        ext.refMap = "mixins.loliasm.refmap.json"
+        ext.refMap = "mixins.normalasm.refmap.json"
     }
 }
 
@@ -146,10 +146,10 @@ jar {
     manifest {
         attributes([
                 "FMLCorePluginContainsFMLMod": true,
-                "FMLCorePlugin": 'zone.rong.loliasm.core.LoliLoadingPlugin',
+                "FMLCorePlugin": 'mirror.normalasm.core.NormalLoadingPlugin',
                 "ForceLoadAsMod": project.gradle.startParameter.taskNames[0] == "build",
                 "TweakClass": 'org.spongepowered.asm.launch.MixinTweaker',
-                "FMLAT": "loliasm_at.cfg"
+                "FMLAT": "normalasm_at.cfg"
         ])
     }
 }
