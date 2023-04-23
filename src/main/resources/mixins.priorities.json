@@ -1,0 +1,17 @@
+{
+  "package": "mirror.normalasm.common.priorities.mixins",
+  "plugin": "mirror.normalasm.core.NormalMixinPlugin",
+  "refmap": "mixins.normalasm.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MinecraftServerMixin"
+  ],
+  "client": [
+    "client.ChunkRenderDispatcherMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

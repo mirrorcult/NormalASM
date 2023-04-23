@@ -56,6 +56,8 @@ public class CommonProxy {
         if (NormalConfig.instance.cleanupLaunchClassLoaderEarly) {
             cleanupLaunchClassLoader();
         }
+        if (NormalConfig.instance.threadPriorityFix)
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 2);
     }
 
     public void preInit(FMLPreInitializationEvent event) { }
