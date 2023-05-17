@@ -1,7 +1,5 @@
 package mirror.normalasm.proxy;
 
-import mirror.normalasm.bakedquad.NormalVertexDataPool;
-import mirror.normalasm.core.NormalTransformer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -17,14 +15,15 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import pl.asie.foamfix.shared.FoamFixShared;
 import slimeknights.tconstruct.library.client.texture.AbstractColoredTexture;
-import mirror.normalasm.NormalLogger;
-import mirror.normalasm.NormalReflector;
-import mirror.normalasm.client.mcfixes.SkinDataReleaser;
-import mirror.normalasm.client.models.bucket.NormalBakedDynBucket;
+import mirror.normalasm.LoliLogger;
+import mirror.normalasm.LoliReflector;
+import mirror.normalasm.bakedquad.LoliVertexDataPool;
+import mirror.normalasm.client.models.bucket.LoliBakedDynBucket;
 import mirror.normalasm.client.screenshot.ScreenshotListener;
 import mirror.normalasm.client.sprite.FramesTextureData;
 import mirror.normalasm.common.modfixes.qmd.QMDEventHandler;
-import mirror.normalasm.config.NormalConfig;
+import mirror.normalasm.config.LoliConfig;
+import mirror.normalasm.core.LoliTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +58,6 @@ public class ClientProxy extends CommonProxy {
         }
         if (NormalConfig.instance.copyScreenshotToClipboard) {
             MinecraftForge.EVENT_BUS.register(ScreenshotListener.class);
-        }
-        if (NormalConfig.instance.fixMC186052) {
-            MinecraftForge.EVENT_BUS.register(SkinDataReleaser.class);
         }
     }
 
