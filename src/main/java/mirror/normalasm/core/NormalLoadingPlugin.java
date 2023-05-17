@@ -203,8 +203,6 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                     return NormalConfig.instance.releaseScreenshotCache || NormalConfig.instance.asyncScreenshot;
                 case "mixins.ondemand_sprites.json":
                     return NormalConfig.instance.onDemandAnimatedTextures;
-                case "mixins.searchtree_vanilla.json":
-                    return NormalConfig.instance.replaceSearchTreeWithJEISearching;
                 case "mixins.resolve_mc2071.json":
                     return NormalConfig.instance.resolveMC2071;
                 case "mixins.fix_mc_skindownloading.json":
