@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mixin(TextureAtlasSprite.class)
 public interface TextureAtlasSpriteAccessor {
+
     @Accessor("framesTextureData")
     List<int[][]> normal$getTextureData();
 }
