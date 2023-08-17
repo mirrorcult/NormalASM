@@ -245,6 +245,8 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                 return NormalConfig.instance.crashReportImprovements;
             case "mixins.fix_mc129057.json":
                 return NormalConfig.instance.fixMC129057;
+            case "mixins.priorities.json":
+                return NormalConfig.instance.threadPriorityFix;
         }
         return true;
     }
