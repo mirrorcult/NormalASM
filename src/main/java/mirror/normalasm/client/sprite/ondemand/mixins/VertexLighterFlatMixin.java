@@ -10,6 +10,8 @@ import mirror.normalasm.client.sprite.ondemand.IAnimatedSpritePrimer;
 import mirror.normalasm.client.sprite.ondemand.ICompiledChunkExpander;
 import mirror.normalasm.client.sprite.ondemand.IVertexLighterExpander;
 
+import java.util.Objects;
+
 @Mixin(VertexLighterFlat.class)
 public abstract class VertexLighterFlatMixin extends QuadGatheringTransformer implements IVertexLighterExpander {
 
@@ -23,7 +25,7 @@ public abstract class VertexLighterFlatMixin extends QuadGatheringTransformer im
 
     @Override
     public void setTexture(TextureAtlasSprite texture) {
-        if (this.primedForDispatch && texture.hasAnimationMetadata()) {
+        if (this.primedForDispatch && Objects.nonNull(texture) && texture.hasAnimationMetadata()) {
             CompiledChunk chunk = IAnimatedSpritePrimer.CURRENT_COMPILED_CHUNK.get();
             if (chunk != null) {
                 ((ICompiledChunkExpander) chunk).resolve(texture);
