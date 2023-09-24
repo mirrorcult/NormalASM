@@ -8,25 +8,28 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import org.spongepowered.asm.mixin.*;
 import mirror.normalasm.common.singletonevents.IRefreshEvent;
 
+import java.lang.ref.WeakReference;
+
 @Mixin(value = BlockEvent.class, remap = false)
 public class BlockEventMixin extends Event implements IRefreshEvent {
 
-    @Shadow @Final @Mutable private World world;
+    // @Shadow @Final @Mutable private World world;
     @Shadow @Final @Mutable private BlockPos pos;
     @Shadow @Final @Mutable private IBlockState state;
 
+    @Unique private WeakReference<World> normalWorldRef;
+
     @Override
     public void beforeBlockEvent(World world, BlockPos pos, IBlockState state) {
-        this.world = world;
+        // this.world = world;
+        this.normalWorldRef = new WeakReference<>(world);
         this.pos = pos;
         this.state = state;
     }
 
-    @Override
-    public void afterBlockEvent() {
-        this.world = null;
-        this.pos = null;
-        this.state = null;
+    @Overwrite
+    public World getWorld() {
+        return this.normalWorldRef.get();
     }
 
 }
