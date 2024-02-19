@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import mirror.normalasm.NormalLogger;
-import mirror.normalasm.NormalReflector;
 import mirror.normalasm.bakedquad.NormalVertexDataPool;
 import mirror.normalasm.client.models.bucket.NormalBakedDynBucket;
 import mirror.normalasm.client.screenshot.ScreenshotListener;
@@ -23,7 +22,7 @@ import mirror.normalasm.core.NormalTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 @Mod.EventBusSubscriber(modid = "normalasm", value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {
