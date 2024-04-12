@@ -22,7 +22,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class NormalTransformer implements IClassTransformer {
 
-    public static boolean isOptifineInstalled;
+    public static boolean isOptifineInstalled, isSodiumPortInstalled;
     public static boolean squashBakedQuads = NormalConfig.instance.squashBakedQuads;
 
     Multimap<String, Function<byte[], byte[]>> transformations;
@@ -30,9 +30,15 @@ public class NormalTransformer implements IClassTransformer {
     public NormalTransformer() {
         NormalLogger.instance.info("NormalASM is now preparing to bytecode manipulate your game.");
         isOptifineInstalled = NormalReflector.doesClassExist("optifine.OptiFineForgeTweaker");
-        if (squashBakedQuads && isOptifineInstalled) {
-            squashBakedQuads = false;
-            NormalLogger.instance.info("Optifine is installed. BakedQuads won't be squashed as it is incompatible with OptiFine.");
+        isSodiumPortInstalled = NormalReflector.doesClassExist("me.jellysquid.mods.sodium.client.SodiumMixinTweaker");
+        if (squashBakedQuads) {
+            if (isOptifineInstalled) {
+                squashBakedQuads = false;
+                NormalLogger.instance.info("Optifine is installed. BakedQuads won't be squashed as it is incompatible with OptiFine.");
+            } else if (isSodiumPortInstalled) {
+                squashBakedQuads = false;
+                NormalLogger.instance.info("A sodium port is installed. BakedQuads won't be squashed as it is incompatible with Sodium.");
+            }
         }
         transformations = MultimapBuilder.hashKeys(30).arrayListValues(1).build();
         if (NormalLoadingPlugin.isClient) {
