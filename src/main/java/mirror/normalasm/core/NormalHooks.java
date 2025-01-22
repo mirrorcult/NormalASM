@@ -84,5 +84,4 @@ public class NormalHooks {
     public static String nbtTagString$override$ctor(String data) {
         return NormalStringPool.canonicalize(data);
     }
-
 }

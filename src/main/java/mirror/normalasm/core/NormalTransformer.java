@@ -143,7 +143,7 @@ public class NormalTransformer implements IClassTransformer {
         if (NormalConfig.instance.fixMC31681) {
             addTransformation("net.minecraft.client.renderer.EntityRenderer", this::fixMC31681);
         }
-        addTransformation("net.minecraft.nbt.NBTTagCompound", bytes -> nbtTagCompound$replaceDefaultHashMap(bytes, NormalConfig.instance.optimizeNBTTagCompoundBackingMap, NormalConfig.instance.nbtBackingMapStringCanonicalization));
+        addTransformation("net.minecraft.nbt.NBTTagCompound", bytes -> nbtTagCompound$replaceDefaultHashMap(bytes, NormalConfig.instance.optimizeNBTTagCompoundBackingMap, NormalConfig.instance.optimizeNBTTagCompoundMapThreshold, NormalConfig.instance.nbtBackingMapStringCanonicalization));
     }
 
     public void addTransformation(String key, Function<byte[], byte[]> value) {
@@ -468,29 +468,28 @@ public class NormalTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-    private byte[] nbtTagCompound$replaceDefaultHashMap(byte[] bytes, boolean optimizeMap, boolean canonicalizeString) {
-        if (!optimizeMap && !canonicalizeString) {
+    private byte[] nbtTagCompound$replaceDefaultHashMap(byte[] bytes, boolean optimizeMap, int mapThreshold, boolean canonicalizeString) {
+        if ((!optimizeMap || mapThreshold == 0) && !canonicalizeString) {
             return bytes;
         }
         ClassReader reader = new ClassReader(bytes);
         ClassNode node = new ClassNode();
         reader.accept(node, 0);
-
         for (MethodNode method : node.methods) {
             if (method.name.equals("<init>")) {
                 ListIterator<AbstractInsnNode> iter = method.instructions.iterator();
                 while (iter.hasNext()) {
                     AbstractInsnNode instruction = iter.next();
                     if (instruction.getOpcode() == INVOKESTATIC) {
-                        iter.set(new TypeInsnNode(NEW, canonicalizeString ? "mirror/normalasm/api/datastructures/canonical/AutoCanonizingArrayMap" : "it/unimi/dsi/fastutil/objects/Object2ObjectArrayMap"));
+                        iter.set(new TypeInsnNode(NEW, "mirror/normalasm/api/datastructures/TagMap"));
                         iter.add(new InsnNode(DUP));
-                        iter.add(new MethodInsnNode(INVOKESPECIAL, canonicalizeString ? "mirror/normalasm/api/datastructures/canonical/AutoCanonizingArrayMap" : "it/unimi/dsi/fastutil/objects/Object2ObjectArrayMap", "<init>", "()V", false));
+                        iter.add(new MethodInsnNode(INVOKESPECIAL, "mirror/normalasm/api/datastructures/TagMap", "<init>", "()V", false));
                         break;
                     }
                 }
+                break;
             }
         }
-
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         node.accept(writer);
         return writer.toByteArray();
