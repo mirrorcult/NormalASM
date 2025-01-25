@@ -481,9 +481,9 @@ public class NormalTransformer implements IClassTransformer {
                 while (iter.hasNext()) {
                     AbstractInsnNode instruction = iter.next();
                     if (instruction.getOpcode() == INVOKESTATIC) {
-                        iter.set(new TypeInsnNode(NEW, "mirror/normalasm/api/datastructures/TagMap"));
+                        iter.set(new TypeInsnNode(NEW, "mirror/normalasm/api/datastructures/NormalTagMap"));
                         iter.add(new InsnNode(DUP));
-                        iter.add(new MethodInsnNode(INVOKESPECIAL, "mirror/normalasm/api/datastructures/TagMap", "<init>", "()V", false));
+                        iter.add(new MethodInsnNode(INVOKESPECIAL, "mirror/normalasm/api/datastructures/NormalTagMap", "<init>", "()V", false));
                         break;
                     }
                 }
