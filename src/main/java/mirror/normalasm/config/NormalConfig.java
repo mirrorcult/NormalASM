@@ -67,9 +67,10 @@ public class NormalConfig {
     public boolean resourceLocationCanonicalization, modelConditionCanonicalization, nbtTagStringBackingStringCanonicalization, nbtBackingMapStringCanonicalization, packageStringCanonicalization, lockCodeCanonicalization, spriteNameCanonicalization, asmDataStringCanonicalization, vertexDataCanonicalization, filePermissionsCacheCanonicalization;
     public boolean optimizeFMLRemapper;
     public boolean optimizeRegistries, optimizeNBTTagCompoundBackingMap, optimizeFurnaceRecipeStore, stripNearUselessItemStackFields, moreModelManagerCleanup, efficientHashing, replaceSearchTreeWithJEISearching;
+    public int optimizeNBTTagCompoundMapThreshold;
     public boolean releaseSpriteFramesCache, onDemandAnimatedTextures;
     public boolean optimizeSomeRendering, stripUnnecessaryLocalsInRenderHelper;
-    public boolean quickerEnableUniversalBucketCheck, stripInstancedRandomFromSoundEventAccessor, classCaching, copyScreenshotToClipboard, releaseScreenshotCache, asyncScreenshot, removeExcessiveGCCalls, smoothDimensionChange;
+    public boolean quickerEnableUniversalBucketCheck, stripInstancedRandomFromSoundEventAccessor, classCaching, copyScreenshotToClipboard, releaseScreenshotCache, asyncScreenshot, removeExcessiveGCCalls, smoothDimensionChange, threadPriorityFix, outdatedCaCertsFix;
     public boolean fixBlockIEBaseArrayIndexOutOfBoundsException, cleanupChickenASMClassHierarchyManager, optimizeAmuletRelatedFunctions, labelCanonicalization, skipCraftTweakerRecalculatingSearchTrees, bwmBlastingOilOptimization, optimizeQMDBeamRenderer, repairEvilCraftEIOCompat, optimizeArcaneLockRendering, fixXU2CrafterCrash, disableXU2CrafterRendering, fixTFCFallingBlockFalseStartingTEPos;
     public boolean fixAmuletHolderCapability, delayItemStackCapabilityInit;
     public boolean fixFillBucketEventNullPointerException, fixTileEntityOnLoadCME, removeForgeSecurityManager, fasterEntitySpawnPreparation, fixDimensionTypesInliningCrash;
@@ -117,6 +118,7 @@ public class NormalConfig {
         // optimizeDataStructures = getBoolean("optimizeDataStructures", "datastructures", "Optimizes various data structures around Minecraft", true);
         optimizeRegistries = getBoolean("optimizeRegistries", "datastructures", "Optimizes registries", true);
         optimizeNBTTagCompoundBackingMap = getBoolean("optimizeNBTTagCompoundBackingMap", "datastructures", "Optimize NBTTagCompound's backing map structure", true);
+        optimizeNBTTagCompoundMapThreshold = getInteger("optimizeNBTTagCompoundMapThreshold", "datastructures", "Max size NBTTagCompounds backing map can get before it gets changed to HashMap from ArrayMap", 5);
         optimizeFurnaceRecipeStore = getBoolean("optimizeFurnaceRecipeStore", "datastructures", "Optimizing FurnaceRecipes. FastFurnace will see very little benefit when this option is turned on", true);
         stripNearUselessItemStackFields = getBoolean("stripNearUselessItemStackFields", "datastructures", "EXPERIMENTAL: Strips ItemStack of some of its fields as it stores some near-useless references", true);
         moreModelManagerCleanup = getBoolean("moreModelManagerCleanup", "datastructures", "Clears and trims ModelManager data structures after models are loaded and baked", true);
@@ -137,6 +139,8 @@ public class NormalConfig {
         asyncScreenshot = getBoolean("asyncScreenshot", "misc", "Process screenshots and print to chat asynchronously", true);
         removeExcessiveGCCalls = getBoolean("removeExcessiveGCCalls", "misc", "Removes forced garbage collection calls, inspired by VanillaFix, can make world loading faster", true);
         smoothDimensionChange = getBoolean("smoothDimensionChange", "misc", "Allows changing of dimensions to be smooth and nearly instantaneous, inspired by VanillaFix", true);
+        threadPriorityFix = getBoolean("threadPriorityFix", "misc", "Adjust thread priorities to improve performance on systems with few cores", true);
+        outdatedCaCertsFix = getBoolean("outdatedCaCertsFix", "misc", "Use updated CA Certs that was included in 8u311. This most notably fixes 8u51 certs issues", true);
 
         fixBlockIEBaseArrayIndexOutOfBoundsException = getBoolean("fixBlockIEBaseArrayIndexOutOfBoundsException", "modfixes", "When Immersive Engineering is installed, sometimes it or it's addons can induce an ArrayIndexOutOfBoundsException in BlockIEBase#getPushReaction. This option will be ignored when IE isn't installed", true);
         cleanupChickenASMClassHierarchyManager = getBoolean("cleanupChickenASMClassHierarchyManager", "modfixes", "EXPERIMENTAL: When ChickenASM (Library of CodeChickenLib and co.) is installed, ClassHierarchyManager can cache a lot of Strings and seem to be unused in any transformation purposes. This clears ClassHierarchyManager of those redundant strings. This option will be ignored when ChickenASM isn't installed", true);
@@ -239,6 +243,16 @@ public class NormalConfig {
         prop.setShowInGui(true);
         prop.setLanguageKey("normalasm.config." + name);
         return prop.getBoolean(defaultValue);
+    }
+
+    private int getInteger(String name, String category, String description, int defaultValue) {
+        Property prop = configuration.get(category, name, defaultValue);
+        prop.setDefaultValue(defaultValue);
+        prop.setComment(description + " - <default: " + defaultValue + ">");
+        prop.setRequiresMcRestart(true);
+        prop.setShowInGui(true);
+        prop.setLanguageKey("normalasm.config." + name);
+        return prop.getInt(defaultValue);
     }
 
     private String[] getStringArray(String name, String category, String description, String... defaultValue) {

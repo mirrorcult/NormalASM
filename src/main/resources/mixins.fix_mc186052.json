@@ -1,0 +1,11 @@
+{
+  "package": "mirror.normalasm.client.mcfixes.mixins.mc186052",
+  "refmap": "mixins.normalasm.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MinecraftMixin",
+    "TextureManagerExpansion"
+  ]
+}

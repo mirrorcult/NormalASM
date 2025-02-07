@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -22,6 +23,7 @@ import mirror.normalasm.common.singletonevents.IRefreshEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.Map;
 
 @Mixin(value = ForgeEventFactory.class, remap = false)
 public abstract class ForgeEventFactoryMixin {
@@ -42,7 +44,7 @@ public abstract class ForgeEventFactoryMixin {
     @Unique private static final IRefreshEvent CHUNK_ATTACH_CAPABILITIES_EVENT_CASTED = (IRefreshEvent) CHUNK_ATTACH_CAPABILITIES_EVENT;
 
     @Unique private static final NeighborNotifyEvent NEIGHBOR_NOTIFY_EVENT = new NeighborNotifyEvent(null, null, null, null, false);
-    @Unique private static final IRefreshEvent NEIGHBOR_NOTIFY_EVENT_CASTED = (IRefreshEvent) new NeighborNotifyEvent(null, null, null, null, false);
+    @Unique private static final IRefreshEvent NEIGHBOR_NOTIFY_EVENT_CASTED = (IRefreshEvent) NEIGHBOR_NOTIFY_EVENT;
 
     // Not frequent enough:
     /*
@@ -59,8 +61,8 @@ public abstract class ForgeEventFactoryMixin {
     public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity) {
         TE_ATTACH_CAPABILITIES_EVENT_CASTED.beforeAttachCapabilities(tileEntity);
         MinecraftForge.EVENT_BUS.post(TE_ATTACH_CAPABILITIES_EVENT);
-        TE_ATTACH_CAPABILITIES_EVENT_CASTED.afterAttachCapabilities();
-        return !TE_ATTACH_CAPABILITIES_EVENT.getCapabilities().isEmpty() ? new CapabilityDispatcher(TE_ATTACH_CAPABILITIES_EVENT.getCapabilities(), null) : null;
+        Map<ResourceLocation, ICapabilityProvider> caps = TE_ATTACH_CAPABILITIES_EVENT.getCapabilities();
+        return !caps.isEmpty() ? new CapabilityDispatcher(caps, null) : null;
     }
 
     /**
@@ -72,8 +74,8 @@ public abstract class ForgeEventFactoryMixin {
     public static CapabilityDispatcher gatherCapabilities(Entity entity) {
         ENTITY_ATTACH_CAPABILITIES_EVENT_CASTED.beforeAttachCapabilities(entity);
         MinecraftForge.EVENT_BUS.post(ENTITY_ATTACH_CAPABILITIES_EVENT);
-        ENTITY_ATTACH_CAPABILITIES_EVENT_CASTED.afterAttachCapabilities();
-        return !ENTITY_ATTACH_CAPABILITIES_EVENT.getCapabilities().isEmpty() ? new CapabilityDispatcher(ENTITY_ATTACH_CAPABILITIES_EVENT.getCapabilities(), null) : null;
+        Map<ResourceLocation, ICapabilityProvider> caps = ENTITY_ATTACH_CAPABILITIES_EVENT.getCapabilities();
+        return !caps.isEmpty() ? new CapabilityDispatcher(caps, null) : null;
     }
 
     /**
@@ -85,8 +87,8 @@ public abstract class ForgeEventFactoryMixin {
     public static CapabilityDispatcher gatherCapabilities(ItemStack stack, ICapabilityProvider parent) {
         ITEM_STACK_ATTACH_CAPABILITIES_EVENT_CASTED.beforeAttachCapabilities(stack);
         MinecraftForge.EVENT_BUS.post(ITEM_STACK_ATTACH_CAPABILITIES_EVENT);
-        ITEM_STACK_ATTACH_CAPABILITIES_EVENT_CASTED.afterAttachCapabilities();
-        return parent != null || !ITEM_STACK_ATTACH_CAPABILITIES_EVENT.getCapabilities().isEmpty() ? new CapabilityDispatcher(ITEM_STACK_ATTACH_CAPABILITIES_EVENT.getCapabilities(), parent) : null;
+        Map<ResourceLocation, ICapabilityProvider> caps = ITEM_STACK_ATTACH_CAPABILITIES_EVENT.getCapabilities();
+        return parent != null || !caps.isEmpty() ? new CapabilityDispatcher(caps, parent) : null;
     }
 
     /**
@@ -98,8 +100,8 @@ public abstract class ForgeEventFactoryMixin {
     public static CapabilityDispatcher gatherCapabilities(Chunk chunk) {
         CHUNK_ATTACH_CAPABILITIES_EVENT_CASTED.beforeAttachCapabilities(chunk);
         MinecraftForge.EVENT_BUS.post(CHUNK_ATTACH_CAPABILITIES_EVENT);
-        CHUNK_ATTACH_CAPABILITIES_EVENT_CASTED.afterAttachCapabilities();
-        return !CHUNK_ATTACH_CAPABILITIES_EVENT.getCapabilities().isEmpty() ? new CapabilityDispatcher(CHUNK_ATTACH_CAPABILITIES_EVENT.getCapabilities(), null) : null;
+        Map<ResourceLocation, ICapabilityProvider> caps = CHUNK_ATTACH_CAPABILITIES_EVENT.getCapabilities();
+        return !caps.isEmpty() ? new CapabilityDispatcher(caps, null) : null;
     }
 
     /**
@@ -109,11 +111,8 @@ public abstract class ForgeEventFactoryMixin {
     @Nullable
     @Overwrite
     public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides, boolean forceRedstoneUpdate) {
-        NEIGHBOR_NOTIFY_EVENT_CASTED.beforeBlockEvent(world, pos, state);
-        NEIGHBOR_NOTIFY_EVENT_CASTED.beforeNeighborNotify(notifiedSides, forceRedstoneUpdate);
+        NEIGHBOR_NOTIFY_EVENT_CASTED.beforeNeighborNotify(world, pos, state, notifiedSides, forceRedstoneUpdate);
         MinecraftForge.EVENT_BUS.post(NEIGHBOR_NOTIFY_EVENT);
-        NEIGHBOR_NOTIFY_EVENT_CASTED.afterBlockEvent();
-        NEIGHBOR_NOTIFY_EVENT_CASTED.afterNeighborNotify();
         return NEIGHBOR_NOTIFY_EVENT;
     }
 

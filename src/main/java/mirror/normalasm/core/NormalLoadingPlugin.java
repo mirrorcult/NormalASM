@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import mirror.normalasm.UnsafeNormal;
 import mirror.normalasm.config.NormalConfig;
@@ -16,6 +17,7 @@ import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -29,7 +31,7 @@ import java.util.zip.ZipFile;
 @IFMLLoadingPlugin.MCVersion(ForgeVersion.mcVersion)
 public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
-    public static final String VERSION = "5.6";
+    public static final String VERSION = "5.23";
 
     public static final boolean isDeobf = FMLLaunchHandler.isDeobfuscatedEnvironment();
 
@@ -71,6 +73,17 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
         }
         if (NormalConfig.instance.sparkProfileEntireGameLoad) {
             NormalSparker.start("game");
+        }
+        if (NormalConfig.instance.outdatedCaCertsFix) {
+            try (InputStream is = this.getClass().getResource("/cacerts").openStream()) {
+                File cacertsCopy = File.createTempFile("cacerts", "");
+                cacertsCopy.deleteOnExit();
+                FileUtils.copyInputStreamToFile(is, cacertsCopy);
+                System.setProperty("javax.net.ssl.trustStore", cacertsCopy.getAbsolutePath());
+                NormalLogger.instance.warn("Replacing CA Certs with an updated one...");
+            } catch (Exception e) {
+                NormalLogger.instance.warn("Unable to replace CA Certs.", e);
+            }
         }
         if (NormalConfig.instance.removeForgeSecurityManager) {
             UnsafeNormal.removeFMLSecurityManager();
@@ -158,13 +171,15 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                 "mixins.crashes.json",
                 "mixins.fix_mc129057.json",
                 "mixins.bucket.json",
+                "mixins.priorities.json",
                 "mixins.rendering.json",
                 "mixins.datastructures_modelmanager.json",
                 "mixins.screenshot.json",
                 "mixins.ondemand_sprites.json",
                 "mixins.searchtree_vanilla.json",
                 "mixins.resolve_mc2071.json",
-                "mixins.fix_mc_skindownloading.json") :
+                "mixins.fix_mc_skindownloading.json",
+                "mixins.fix_mc186052.json") :
                 Arrays.asList(
                         "mixins.devenv.json",
                         "mixins.vfix_bugfixes.json",
@@ -179,6 +194,7 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                         "mixins.capability.json",
                         "mixins.singletonevents.json",
                         "mixins.efficienthashing.json",
+                        "mixins.priorities.json",
                         "mixins.crashes.json",
                         "mixins.fix_mc129057.json");
     }
@@ -198,10 +214,6 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                     return NormalConfig.instance.moreModelManagerCleanup;
                 case "mixins.screenshot.json":
                     return NormalConfig.instance.releaseScreenshotCache || NormalConfig.instance.asyncScreenshot;
-                case "mixins.ondemand_sprites.json":
-                    return NormalConfig.instance.onDemandAnimatedTextures;
-                case "mixins.searchtree_vanilla.json":
-                    return NormalConfig.instance.replaceSearchTreeWithJEISearching;
                 case "mixins.resolve_mc2071.json":
                     return NormalConfig.instance.resolveMC2071;
                 case "mixins.fix_mc_skindownloading.json":
@@ -231,6 +243,8 @@ public class NormalLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader
                 return NormalConfig.instance.crashReportImprovements;
             case "mixins.fix_mc129057.json":
                 return NormalConfig.instance.fixMC129057;
+            case "mixins.priorities.json":
+                return NormalConfig.instance.threadPriorityFix;
         }
         return true;
     }
